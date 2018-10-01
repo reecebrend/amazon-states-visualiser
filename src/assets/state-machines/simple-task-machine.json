@@ -1,26 +1,20 @@
 {
   "Comment": "Simple task state machine",
-  "StartAt": "FirstState",
+  "StartAt": "StateOne",
   "States": {
-    "FirstState": {
+    "StateOne": {
       "Type": "Task",
-      "InputPath": "$",
-      "Resource": "module:testModuleOne",
-      "ResourceConfig": {
-        "helpfulAttribute": "You might include some inputs for testModule here"
-      },
-      "Next": "SecondState"
+      "Resource": "module:moduleOne",
+      "Next": "StateTwo"
     },
-    "SecondState": {
+    "StateTwo": {
       "Type": "Task",
-      "InputPath": "$.sourceDir",
-      "Resource": "module:testModuleTwo",
-      "Next": "ThirdState"
+      "Resource": "module:moduleTwo",
+      "Next": "StateThree"
     },
-    "ThirdState": {
+    "StateThree": {
       "Type": "Task",
-      "InputPath": "$.sourceDir",
-      "Resource": "module:testModuleThree",
+      "Resource": "module:moduleThree",
       "End": true
     }
   },
