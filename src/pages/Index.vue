@@ -56,30 +56,33 @@
         </div>
       </div>
 
-      <div style="position: fixed; bottom: 18px; right: 18px; text-align: right;">
-        <q-btn round color="info" outline icon="clear" size="md" style="bottom: 20px; margin-right: 10px;" @click="clear">
-          <q-tooltip>Clear</q-tooltip>
-        </q-btn>
-        <q-btn round color="info" icon="refresh" size="md" style="bottom: 20px" @click="refresh">
-          <q-tooltip>Refresh</q-tooltip>
-        </q-btn>
-      </div>
+    <div style="position: fixed; bottom: 18px; right: 18px; text-align: right;">
+      <q-btn round color="info" outline icon="clear" size="md" style="bottom: 20px; margin-right: 10px;" @click="clear">
+        <q-tooltip>Clear</q-tooltip>
+      </q-btn>
+      <q-btn round color="info" icon="refresh" size="md" style="bottom: 20px" @click="refresh">
+        <q-tooltip>Refresh</q-tooltip>
+      </q-btn>
+    </div>
   </q-page>
 </template>
 
 <style>
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #272822;
-}
-::-webkit-scrollbar-thumb {
-  background: #888;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #272822;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 </style>
 
 <script>
@@ -106,6 +109,19 @@ export default {
       this.stateCode = JSON.stringify(this.stateMachines[key], null, 2)
       this.refresh()
     },
+    getSVGElems () {
+      const shapes = []
+      const text = []
+      const svg = document.getElementsByTagName('svg')
+      svg[0].childNodes.forEach(node => {
+        if (node.nodeName === 'rect') shapes.push(node)
+        else if (node.nodeName === 'text') text.push(node)
+      })
+
+      shapes.forEach((shape, idx) => {
+        shape.setAttribute('onclick', `console.log("you clicked: ${text[idx].childNodes[0].innerHTML}")`)
+      })
+    },
     codeChange (e) {
       this.stateCode = e
     },
@@ -125,6 +141,7 @@ export default {
       flowCode += `e=>end: End\n${endString}->e`
       const diagram = flowchart.parse(flowCode)
       diagram.drawSVG('diagram', opts.default)
+      this.getSVGElems()
     },
     refresh () {
       try {
