@@ -109,6 +109,7 @@ export default {
       this.stateCode = e
     },
     parseStateCode (stateCode) {
+      document.getElementById('diagram').innerHTML = ''
       let flowCode = 'st=>start: Start \n'
       let endString = 'st'
       let opCounter = 1
