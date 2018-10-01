@@ -1,7 +1,7 @@
 {
-  "name": "amazon-states-visualiser",
+  "name": "Amazon States Visualiser",
   "version": "1.0.0",
-  "description": "Quasar app to visualise Amazon states language (https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html) state machines ",
+  "description": "Quasar app to visualise Amazon states language (https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html) state machines.",
   "productName": "amazon-states-visualiser",
   "cordovaId": "org.cordova.quasar.app",
   "author": "reecebrend <brendy36@gmail.com>",
