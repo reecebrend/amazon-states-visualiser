@@ -137,9 +137,18 @@ export default {
       diagram.drawSVG('diagram', opts.default)
     },
     refresh () {
-      this.refreshEditor()
-      this.parseStateCode(this.stateCode)
-      this.displaying = true
+      try {
+        this.refreshEditor()
+        this.parseStateCode(this.stateCode)
+        this.displaying = true
+      } catch (e) {
+        console.log('Error:', e)
+        this.$q.notify({
+          type: 'warning',
+          message: 'There was an error.',
+          position: 'top'
+        })
+      }
     },
     clear () {
       this.stateCode = ''
