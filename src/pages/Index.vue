@@ -1,9 +1,7 @@
 <template>
-  <q-page>
+  <q-page class="bg-dark text-light">
       <q-layout-header>
-        <q-toolbar
-          color="dark"
-        >
+        <q-toolbar color="dark">
           <q-toolbar-title>
             Amazon state diagram visualiser
           </q-toolbar-title>
@@ -24,7 +22,7 @@
         </q-toolbar>
       </q-layout-header>
       <div class="row" style="max-height: calc(100vh - 50px); min-height: calc(100vh - 50px);">
-        <div class="col-6 col-md-6">
+        <div class="col-6 col-md-6 shadow-6">
           <brace
             fontsize="12px"
             theme="monokai"
@@ -50,63 +48,75 @@
 </template>
 
 <style>
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #272822;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 </style>
 
 <script>
-  import fsaStateMachine from '../assets/state-machines/fsa.json'
-  import welcome from '../assets/state-machines/help.json'
-  import Brace from 'vue-bulma-brace'
-  import * as brace from 'brace'
-  import * as flowchart from 'flowchart.js'
+import fsaStateMachine from '../assets/state-machines/fsa.json'
+import welcome from '../assets/state-machines/help.json'
+import Brace from 'vue-bulma-brace'
+import * as brace from 'brace'
+import * as flowchart from 'flowchart.js'
 
-  export default {
-    name: 'PageIndex',
-    components: {
-      Brace
-    },
-    data: function () {
-      return {
-        stateCode: '',
-        displaying: false,
-        stateMachines: {
-          fsa: {
-            label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
-          }
+export default {
+  name: 'PageIndex',
+  components: {
+    Brace
+  },
+  data: function () {
+    return {
+      stateCode: '',
+      displaying: false,
+      stateMachines: {
+        fsa: {
+          label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
         }
       }
-    },
-    methods: {
-      selectStateMachine (id) {
-        this.stateCode = this.stateMachines[id].value
-        this.editor.session.setValue(this.stateCode)
-        this.parseStateCode(this.stateCode)
-        this.displaying = true
-      },
-      codeChange (e) {
-        this.stateCode = e
-      },
-      parseStateCode (stateCode) {
-        let flowCode = 'st=>start: Start \n'
-        let endString = 'st'
-        let opCounter = 1
-        const states = JSON.parse(stateCode).States
-        Object.keys(states).forEach(state => {
-          if (states[state].Type === 'Task') {
-            console.log('pushing state', state)
-            flowCode += `op${opCounter}=>operation: ${state} \n`, endString += `->op${opCounter}`, opCounter++
-            console.log('flowcode after push', flowCode)
-            console.log('endstring after push', endString)
-          }
-        })
-        flowCode += `e=>end: End\n${endString}->e`
-        console.log('final flowcode: ', flowCode)
-        const diagram = flowchart.parse(flowCode)
-        diagram.drawSVG('diagram')
-      }
-    },
-    mounted () {
-      this.editor = brace.edit('vue-bulma-editor')
-      this.editor.session.setValue(JSON.stringify(welcome, null, 2))
     }
+  },
+  methods: {
+    selectStateMachine (id) {
+      this.stateCode = this.stateMachines[id].value
+      this.editor.session.setValue(this.stateCode)
+      this.parseStateCode(this.stateCode)
+      this.displaying = true
+    },
+    codeChange (e) {
+      this.stateCode = e
+    },
+    parseStateCode (stateCode) {
+      let flowCode = 'st=>start: Start \n'
+      let endString = 'st'
+      let opCounter = 1
+      const states = JSON.parse(stateCode).States
+      Object.keys(states).forEach(state => {
+        if (states[state].Type === 'Task') {
+          console.log('pushing state', state)
+          flowCode += `op${opCounter}=>operation: ${state} \n`, endString += `->op${opCounter}`, opCounter++
+          console.log('flowcode after push', flowCode)
+          console.log('endstring after push', endString)
+        }
+      })
+      flowCode += `e=>end: End\n${endString}->e`
+      console.log('final flowcode: ', flowCode)
+      const diagram = flowchart.parse(flowCode)
+      diagram.drawSVG('diagram')
+    }
+  },
+  mounted () {
+    this.editor = brace.edit('vue-bulma-editor')
+    this.editor.session.setValue(JSON.stringify(welcome, null, 2))
   }
+}
 </script>
