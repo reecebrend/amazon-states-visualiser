@@ -1,0 +1,29 @@
+{
+  "Comment": "Wait state machine",
+  "StartAt": "Hello",
+  "States": {
+    "Hello": {
+      "Type": "Task",
+      "Resource": "module:hello",
+      "Next": "WaitForThreeSeconds"
+    },
+    "WaitForThreeSeconds": {
+      "Type": "Wait",
+      "Seconds": 3,
+      "Next": "Hello2"
+    },
+    "Hello2": {
+      "Type": "Task",
+      "Resource": "module:hello",
+      "End": true
+    }
+  },
+  "restrictions": [
+    {
+      "roleId": "$authenticated",
+      "allows": [
+        "*"
+      ]
+    }
+  ]
+}
