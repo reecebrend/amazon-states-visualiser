@@ -93,13 +93,15 @@ export default {
       displaying: false,
       stateMachines: {
         fsa: {
-          label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
+          shorthand: 'fsa', label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
         }
       }
     }
   },
   methods: {
     selectStateMachine (id) {
+      console.log('getting: ', id)
+      console.log('from: ', this.stateMachines)
       this.stateCode = this.stateMachines[id].value
       this.refreshEditor()
       this.parseStateCode(this.stateCode)
