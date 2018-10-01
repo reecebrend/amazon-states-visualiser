@@ -1,5 +1,5 @@
 {
-  "Comment": "Blueprint to import food and hygiene ratings data from a CSV file into the model.",
+  "Comment": "Food Hygiene State Machine",
   "version": "1.0",
   "StartAt": "ProcessingXmlFiles",
   "States": {

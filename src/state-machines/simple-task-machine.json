@@ -1,0 +1,29 @@
+{
+  "Comment": "Simple Task Machine",
+  "StartAt": "StateOne",
+  "States": {
+    "StateOne": {
+      "Type": "Task",
+      "Resource": "module:moduleOne",
+      "Next": "StateTwo"
+    },
+    "StateTwo": {
+      "Type": "Task",
+      "Resource": "module:moduleTwo",
+      "Next": "StateThree"
+    },
+    "StateThree": {
+      "Type": "Task",
+      "Resource": "module:moduleThree",
+      "End": true
+    }
+  },
+  "restrictions": [
+    {
+      "roleId": "$authenticated",
+      "allows": [
+        "*"
+      ]
+    }
+  ]
+}

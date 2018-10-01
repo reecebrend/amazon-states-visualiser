@@ -8,13 +8,14 @@
           <q-btn-dropdown label="Examples" class="q-mr-sm" outline text-color="white">
             <q-list link>
               <q-item
-                v-for="sm in stateMachines"
-                :key="sm.value"
+                v-for="(sm, key) in stateMachines"
+                :key="key"
                 v-close-overlay
-                @click.native="selectStateMachine(sm.shorthand)"
+                @click.native="selectStateMachine(key)"
+                v-if="key !== 'help'"
               >
                 <q-item-main>
-                  <q-item-tile label>{{sm.label}}</q-item-tile>
+                  <q-item-tile label>{{sm.Comment}}</q-item-tile>
                 </q-item-main>
               </q-item>
             </q-list>
@@ -82,9 +83,7 @@
 </style>
 
 <script>
-import fsaStateMachine from '../assets/state-machines/fsa.json'
-import simpleTaskMachine from '../assets/state-machines/simple-task-machine.json'
-import welcome from '../assets/state-machines/help.json'
+import * as stateMachines from '../state-machines'
 import * as opts from '../assets/graph-opts.json'
 import Brace from 'vue-bulma-brace'
 import * as brace from 'brace'
@@ -99,21 +98,12 @@ export default {
     return {
       stateCode: '',
       displaying: false,
-      stateMachines: {
-        fsa: {
-          shorthand: 'fsa', label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
-        },
-        stm: {
-          shorthand: 'stm', label: 'Simple Task Machine', value: JSON.stringify(simpleTaskMachine, null, 2)
-        }
-      }
+      stateMachines
     }
   },
   methods: {
-    selectStateMachine (id) {
-      console.log('getting: ', id)
-      console.log('from: ', this.stateMachines)
-      this.stateCode = this.stateMachines[id].value
+    selectStateMachine (key) {
+      this.stateCode = JSON.stringify(this.stateMachines[key], null, 2)
       this.refresh()
     },
     codeChange (e) {
@@ -161,7 +151,7 @@ export default {
   },
   mounted () {
     this.editor = brace.edit('vue-bulma-editor')
-    this.stateCode = JSON.stringify(welcome, null, 2)
+    this.stateCode = JSON.stringify(stateMachines['help'], null, 2)
     this.refreshEditor()
   }
 }
