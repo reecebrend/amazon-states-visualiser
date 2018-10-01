@@ -36,13 +36,17 @@
           />
         </div>
         <div class="relative-position col-6">
-        <div v-show="this.displaying === false" class="col-6 q-pa-xl">
-          <p class="q-display-4 text-weight-thin">Select a state machine example to visualise!</p>
-          <p class="q-caption text-weight-thin fixed-bottom-right q-pr-md">Inspired by the <a href="https://github.com/wmfs/tymly-monorepo">Tymly</a> implementation of <a href="https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html">Amazon States Language</a></p>
+          <div v-show="this.displaying === false" class="col-6 q-pa-xl">
+            <p class="q-display-4 text-weight-thin">Select a state machine example to visualise!</p>
+          </div>
+          <div id="diagram" v-show="this.displaying === true" class="absolute-center col-6 q-pa-xl"></div>
+          <p class="q-caption text-light fixed-bottom-right q-pr-md">
+            Inspired by the
+            <a class="text-info" href="https://github.com/wmfs/tymly-monorepo">Tymly</a>
+            implementation of
+            <a class="text-info" href="https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html">Amazon States Language</a>
+          </p>
         </div>
-        <div id="diagram" v-show="this.displaying === true" class="absolute-center col-6 q-pa-xl">
-        </div>
-      </div>
       </div>
   </q-page>
 </template>
@@ -88,7 +92,7 @@ export default {
   methods: {
     selectStateMachine (id) {
       this.stateCode = this.stateMachines[id].value
-      this.editor.session.setValue(this.stateCode)
+      this.refreshEditor()
       this.parseStateCode(this.stateCode)
       this.displaying = true
     },
@@ -112,11 +116,15 @@ export default {
       console.log('final flowcode: ', flowCode)
       const diagram = flowchart.parse(flowCode)
       diagram.drawSVG('diagram')
+    },
+    refreshEditor () {
+      this.editor.session.setValue(this.stateCode)
     }
   },
   mounted () {
     this.editor = brace.edit('vue-bulma-editor')
-    this.editor.session.setValue(JSON.stringify(welcome, null, 2))
+    this.stateCode = JSON.stringify(welcome, null, 2)
+    this.refreshEditor()
   }
 }
 </script>
