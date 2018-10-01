@@ -77,6 +77,7 @@
 
 <script>
 import fsaStateMachine from '../assets/state-machines/fsa.json'
+import simpleTaskMachine from '../assets/state-machines/simple-task-machine.json'
 import welcome from '../assets/state-machines/help.json'
 import * as opts from '../assets/graph-opts.json'
 import Brace from 'vue-bulma-brace'
@@ -95,6 +96,9 @@ export default {
       stateMachines: {
         fsa: {
           shorthand: 'fsa', label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
+        },
+        stm: {
+          shorthand: 'stm', label: 'Simple Task Machine', value: JSON.stringify(simpleTaskMachine, null, 2)
         }
       }
     }
