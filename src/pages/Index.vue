@@ -37,10 +37,14 @@
             @code-change="codeChange"
           />
         </div>
-        <div class="col-6 q-pa-xl">
+        <div class="relative-position col-6">
+        <div v-show="this.displaying === false" class="col-6 q-pa-xl">
           <p class="q-display-4 text-weight-thin">Select a state machine example to visualise!</p>
-          <p class="q-display-6 text-weight-thin fixed-bottom-right q-pr-md">Inspired by <a href="https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html">Amazon States Language</a></p>
+          <p class="q-caption text-weight-thin fixed-bottom-right q-pr-md">Inspired by the <a href="https://github.com/wmfs/tymly-monorepo">Tymly</a> implementation of <a href="https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html">Amazon States Language</a></p>
         </div>
+        <div id="diagram" v-show="this.displaying === true" class="absolute-center col-6 q-pa-xl">
+        </div>
+      </div>
       </div>
   </q-page>
 </template>
@@ -53,6 +57,7 @@
   import welcome from '../assets/state-machines/help.json'
   import Brace from 'vue-bulma-brace'
   import * as brace from 'brace'
+  import * as flowchart from 'flowchart.js'
 
   export default {
     name: 'PageIndex',
@@ -62,6 +67,7 @@
     data: function () {
       return {
         stateCode: '',
+        displaying: false,
         stateMachines: {
           fsa: {
             label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
@@ -73,9 +79,29 @@
       selectStateMachine (id) {
         this.stateCode = this.stateMachines[id].value
         this.editor.session.setValue(this.stateCode)
+        this.parseStateCode(this.stateCode)
+        this.displaying = true
       },
       codeChange (e) {
         this.stateCode = e
+      },
+      parseStateCode (stateCode) {
+        let flowCode = 'st=>start: Start \n'
+        let endString = 'st'
+        let opCounter = 1
+        const states = JSON.parse(stateCode).States
+        Object.keys(states).forEach(state => {
+          if (states[state].Type === 'Task') {
+            console.log('pushing state', state)
+            flowCode += `op${opCounter}=>operation: ${state} \n`, endString += `->op${opCounter}`, opCounter++
+            console.log('flowcode after push', flowCode)
+            console.log('endstring after push', endString)
+          }
+        })
+        flowCode += `e=>end: End\n${endString}->e`
+        console.log('final flowcode: ', flowCode)
+        const diagram = flowchart.parse(flowCode)
+        diagram.drawSVG('diagram')
       }
     },
     mounted () {
