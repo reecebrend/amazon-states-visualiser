@@ -78,6 +78,7 @@
 <script>
 import fsaStateMachine from '../assets/state-machines/fsa.json'
 import welcome from '../assets/state-machines/help.json'
+import * as opts from '../assets/graph-opts.json'
 import Brace from 'vue-bulma-brace'
 import * as brace from 'brace'
 import * as flowchart from 'flowchart.js'
@@ -118,18 +119,14 @@ export default {
       const states = JSON.parse(stateCode).States
       Object.keys(states).forEach(state => {
         if (states[state].Type === 'Task') {
-          console.log('pushing state', state)
           flowCode += `op${opCounter}=>operation: ${state} \n`
           endString += `->op${opCounter}`
           opCounter++
-          console.log('flowcode after push', flowCode)
-          console.log('endstring after push', endString)
         }
       })
       flowCode += `e=>end: End\n${endString}->e`
-      console.log('final flowcode: ', flowCode)
       const diagram = flowchart.parse(flowCode)
-      diagram.drawSVG('diagram')
+      diagram.drawSVG('diagram', opts.default)
     },
     refresh () {},
     clear () {
