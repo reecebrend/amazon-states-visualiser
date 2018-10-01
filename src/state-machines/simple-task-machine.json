@@ -1,5 +1,5 @@
 {
-  "Comment": "Simple task state machine",
+  "Comment": "Simple Task Machine",
   "StartAt": "StateOne",
   "States": {
     "StateOne": {
