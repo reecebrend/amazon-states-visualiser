@@ -116,7 +116,9 @@ export default {
       Object.keys(states).forEach(state => {
         if (states[state].Type === 'Task') {
           console.log('pushing state', state)
-          flowCode += `op${opCounter}=>operation: ${state} \n`, endString += `->op${opCounter}`, opCounter++
+          flowCode += `op${opCounter}=>operation: ${state} \n`
+          endString += `->op${opCounter}`
+          opCounter++
           console.log('flowcode after push', flowCode)
           console.log('endstring after push', endString)
         }
