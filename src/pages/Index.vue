@@ -13,7 +13,7 @@
                 v-for="sm in stateMachines"
                 :key="sm.value"
                 v-close-overlay
-                @click.native="selectStateMachine('fsa')"
+                @click.native="selectStateMachine(sm.shorthand)"
               >
                 <q-item-main>
                   <q-item-tile label>{{sm.label}}</q-item-tile>
@@ -54,6 +54,7 @@
 
 <script>
   import fsaStateMachine from '../assets/state-machines/fsa.json'
+  import simpleStateMachine from '../assets/state-machines/simple-task-machine.json'
   import welcome from '../assets/state-machines/help.json'
   import Brace from 'vue-bulma-brace'
   import * as brace from 'brace'
@@ -70,7 +71,10 @@
         displaying: false,
         stateMachines: {
           fsa: {
-            label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
+            shorthand: 'fsa', label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
+          },
+          stm: {
+            shorthand: 'stm', label: 'Simple Task Machine', value: JSON.stringify(simpleStateMachine, null, 2)
           }
         }
       }
@@ -92,14 +96,10 @@
         const states = JSON.parse(stateCode).States
         Object.keys(states).forEach(state => {
           if (states[state].Type === 'Task') {
-            console.log('pushing state', state)
             flowCode += `op${opCounter}=>operation: ${state} \n`, endString += `->op${opCounter}`, opCounter++
-            console.log('flowcode after push', flowCode)
-            console.log('endstring after push', endString)
           }
         })
         flowCode += `e=>end: End\n${endString}->e`
-        console.log('final flowcode: ', flowCode)
         const diagram = flowchart.parse(flowCode)
         diagram.drawSVG('diagram')
       }
