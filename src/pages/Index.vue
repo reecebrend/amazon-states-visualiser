@@ -37,9 +37,15 @@
         </div>
         <div class="relative-position col-6">
           <div v-show="displaying === false" class="col-6 q-pa-xl">
-            <p class="q-display-4 text-weight-thin">Select a state machine example to visualise!</p>
+            <p class="q-display-3 text-weight-thin">Select a state machine example to visualise!</p>
           </div>
-          <div id="diagram" v-show="displaying === true" class="absolute-center col-6 q-pa-xl"></div>
+
+          <div
+            id="diagram"
+            v-show="displaying === true"
+            class="col-6 q-pa-xl scroll text-center"
+            style="height: 90%; width: 100%;"
+          ></div>
           <p class="q-caption text-light fixed-bottom-right q-pr-md">
             Inspired by the
             <a class="text-info" href="https://github.com/wmfs/tymly-monorepo">Tymly</a>
@@ -108,9 +114,7 @@ export default {
       console.log('getting: ', id)
       console.log('from: ', this.stateMachines)
       this.stateCode = this.stateMachines[id].value
-      this.refreshEditor()
-      this.parseStateCode(this.stateCode)
-      this.displaying = true
+      this.refresh()
     },
     codeChange (e) {
       this.stateCode = e
@@ -132,7 +136,11 @@ export default {
       const diagram = flowchart.parse(flowCode)
       diagram.drawSVG('diagram', opts.default)
     },
-    refresh () {},
+    refresh () {
+      this.refreshEditor()
+      this.parseStateCode(this.stateCode)
+      this.displaying = true
+    },
     clear () {
       this.stateCode = ''
       this.displaying = false
