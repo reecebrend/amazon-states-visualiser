@@ -11,7 +11,7 @@
                 v-for="sm in stateMachines"
                 :key="sm.value"
                 v-close-overlay
-                @click.native="selectStateMachine('fsa')"
+                @click.native="selectStateMachine(sm.shorthand)"
               >
                 <q-item-main>
                   <q-item-tile label>{{sm.label}}</q-item-tile>
@@ -93,13 +93,15 @@ export default {
       displaying: false,
       stateMachines: {
         fsa: {
-          label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
+          shorthand: 'fsa', label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
         }
       }
     }
   },
   methods: {
     selectStateMachine (id) {
+      console.log('getting: ', id)
+      console.log('from: ', this.stateMachines)
       this.stateCode = this.stateMachines[id].value
       this.refreshEditor()
       this.parseStateCode(this.stateCode)
