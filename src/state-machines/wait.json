@@ -1,5 +1,5 @@
 {
-  "Comment": "Wait state machine",
+  "Comment": "Wait State",
   "StartAt": "Hello",
   "States": {
     "Hello": {
