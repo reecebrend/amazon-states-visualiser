@@ -25,7 +25,7 @@
         <div class="col-6 col-md-6 shadow-6">
           <brace
             fontsize="12px"
-            theme="monokai"
+            theme="clouds_midnight"
             mode="json"
             codefolding="markbegin"
             softwrap="free"
