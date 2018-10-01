@@ -63,7 +63,7 @@ export default {
       stateCode: '',
       stateMachines: {
         fsa: {
-          label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine)
+          label: 'Food Standards Agency', value: JSON.stringify(fsaStateMachine, null, 2)
         }
       }
     }
