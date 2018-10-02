@@ -56,37 +56,34 @@
         </div>
       </div>
 
-    <div style="position: fixed; bottom: 18px; right: 18px; text-align: right;">
-      <q-btn round color="info" outline icon="clear" size="md" style="bottom: 20px; margin-right: 10px;" @click="clear">
-        <q-tooltip>Clear</q-tooltip>
-      </q-btn>
-      <q-btn round color="info" icon="refresh" size="md" style="bottom: 20px" @click="refresh">
-        <q-tooltip>Refresh</q-tooltip>
-      </q-btn>
-    </div>
+      <div style="position: fixed; bottom: 18px; right: 18px; text-align: right;">
+        <q-btn round color="info" outline icon="clear" size="md" style="bottom: 20px; margin-right: 10px;" @click="clear">
+          <q-tooltip>Clear</q-tooltip>
+        </q-btn>
+        <q-btn round color="info" icon="refresh" size="md" style="bottom: 20px" @click="refresh">
+          <q-tooltip>Refresh</q-tooltip>
+        </q-btn>
+      </div>
   </q-page>
 </template>
 
 <style>
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #272822;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 
-  ::-webkit-scrollbar-track {
-    background: #272822;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #888;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-
-  rect {
-    cursor: pointer;
-  }
+rect {
+  cursor: pointer;
+}
 </style>
 
 <script>
@@ -113,44 +110,15 @@ export default {
       this.stateCode = JSON.stringify(this.stateMachines[key], null, 2)
       this.refresh()
     },
-    getSVGElems () {
-      const shapes = []
-      const text = []
-      const svg = document.getElementsByTagName('svg')
-      svg[0].childNodes.forEach(node => {
-        if (node.nodeName === 'rect') shapes.push(node)
-        else if (node.nodeName === 'text') text.push(node)
-      })
-
-      shapes.forEach((shape, idx) => {
-        shape.setAttribute('onclick', `console.log("you clicked: ${text[idx].childNodes[0].innerHTML}")`)
-      })
-    },
     codeChange (e) {
       this.stateCode = e
     },
-    parseStateCode (stateCode) {
-      document.getElementById('diagram').innerHTML = ''
-      let flowCode = 'st=>start: Start \n'
-      let endString = 'st'
-      let opCounter = 1
-      const states = JSON.parse(stateCode).States
-      Object.keys(states).forEach(state => {
-        if (states[state].Type === 'Task') {
-          flowCode += `op${opCounter}=>operation: ${state} \n`
-          endString += `->op${opCounter}`
-          opCounter++
-        }
-      })
-      flowCode += `e=>end: End\n${endString}->e`
-      const diagram = flowchart.parse(flowCode)
-      diagram.drawSVG('diagram', opts.default)
-      this.getSVGElems()
-    },
     refresh () {
       try {
+        document.getElementById('diagram').innerHTML = ''
         this.refreshEditor()
-        this.parseStateCode(this.stateCode)
+        parse(this.stateCode)
+        this.getSVGElems()
         this.displaying = true
       } catch (e) {
         console.log('Error:', e)
@@ -168,6 +136,18 @@ export default {
     },
     refreshEditor () {
       this.editor.session.setValue(this.stateCode)
+    },
+    getSVGElems () {
+      const shapes = []
+      const text = []
+      const svg = document.getElementsByTagName('svg')
+      svg[0].childNodes.forEach(node => {
+        if (node.nodeName === 'rect') shapes.push(node)
+        else if (node.nodeName === 'text') text.push(node)
+      })
+      shapes.forEach((shape, idx) => {
+        shape.setAttribute('onclick', `console.log("you clicked: ${text[idx].childNodes[0].innerHTML}")`)
+      })
     }
   },
   mounted () {
@@ -176,4 +156,110 @@ export default {
     this.refreshEditor()
   }
 }
+
+const parse = stateMachine => {
+  const flatten = (sm, states) => {
+    if (sm.States) {
+      Object.entries(sm.States).forEach(([key, value]) => {
+        if (!states[key]) states[key] = value
+
+        if (value.Branches) {
+          value.Branches.forEach(branch => {
+            flatten(branch, states)
+          })
+        }
+      })
+    }
+  }
+
+  // Flatten states
+  const sm = JSON.parse(stateMachine)
+  const states = {}
+  flatten(sm, states)
+
+  console.log('STATES', states)
+
+  const steps = [ 'start=>start: Start', 'end=>end: End' ]
+  const flow = [ 'start' ]
+
+  const parseState = (key, state) => {
+    console.log(key, state)
+
+    if (state.Type === 'Task') {
+      flow.push(key)
+      steps.push(`${key}=>operation: ${key}`)
+    }
+
+    if (state.Next) {
+      parseState(state.Next, states[state.Next])
+    }
+  }
+
+  parseState(sm.StartAt, states[sm.StartAt])
+  flow.push('end')
+  const flowCode = `${steps.join('\n')}\n${flow.join('->')}`
+
+  console.log('STEPS', steps)
+  console.log('FLOW', flow)
+  console.log(flowCode)
+
+  const diagram = flowchart.parse(flowCode)
+  diagram.drawSVG('diagram', opts.default)
+}
+
+/*
+parallel e.g.
+
+start=>start
+end=>end
+Parallel1=>parallel: Parallel1
+Parallel2=>parallel: Parallel2
+A=>operation: A
+B=>operation: B
+C=>operation: C
+D=>operation: D
+E=>operation: E
+F=>operation: F
+G=>operation: G
+
+start->Parallel1
+Parallel1(path1, left)->A->G
+Parallel1(path2, bottom)->B->Parallel2
+Parallel2(path1, bottom)->C->F->G
+Parallel2(path2, right)->D->E->F->G
+G->end
+
+             |
+         Parallel1
+         |       |
+         A       B
+     (+4 secs)   |
+      |      Parallel2
+      |      |       |
+      |      C       D
+      |  (+2 secs)   |
+      |      |       E
+      |      |       |
+      |      ---------
+      |          |
+      |          F
+      |          |
+      ------------
+            |
+            G
+*/
+
+/*
+choice e.g.
+
+st=>start
+e=>end
+cond=>condition: Add or Subtract?
+op1=>operation: Add
+op2=>operation: Subtract
+
+st->cond
+cond(yes)->op1->e
+cond(no)->op2->e
+*/
 </script>
