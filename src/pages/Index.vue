@@ -95,11 +95,13 @@ import * as opts from '../assets/graph-opts.json'
 import Brace from 'vue-bulma-brace'
 import * as brace from 'brace'
 import * as flowchart from 'flowchart.js'
+import StateInspector from '../components/state-inspector'
 
 export default {
   name: 'PageIndex',
   components: {
-    Brace
+    Brace,
+    StateInspector
   },
   data: function () {
     return {
@@ -113,6 +115,9 @@ export default {
       this.stateCode = JSON.stringify(this.stateMachines[key], null, 2)
       this.refresh()
     },
+    inspectState (state) {
+      console.log('inspecting: ', state)
+    },
     getSVGElems () {
       const shapes = []
       const text = []
@@ -123,7 +128,10 @@ export default {
       })
 
       shapes.forEach((shape, idx) => {
-        shape.setAttribute('onclick', `console.log("you clicked: ${text[idx].childNodes[0].innerHTML}")`)
+        const stateId = text[idx].childNodes[0].innerHTML
+        shape.addEventListener('click', () => {
+          this.inspectState(stateId)
+        })
       })
     },
     codeChange (e) {
