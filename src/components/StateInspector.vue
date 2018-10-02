@@ -14,7 +14,10 @@
       <q-list
         inset-seperator
       >
-        <q-item v-for="(item, idx) in Object.entries(data)">
+        <q-item
+          v-for="(item, idx) in Object.entries(data)"
+          :key="idx"
+        >
           <q-item-main>
             <q-item-tile class="text-info">{{item[0]}}: </q-item-tile>
             <q-item-tile>{{item[1]}}</q-item-tile>
