@@ -83,6 +83,10 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+
+  rect {
+    cursor: pointer;
+  }
 </style>
 
 <script>
