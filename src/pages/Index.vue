@@ -37,7 +37,7 @@
         />
       </div>
       <div class="relative-position col-6">
-        <inspect-modal class="col-6" :opened="modalOpen" :data="modalData" :id="modalId"/>
+        <inspect-modal class="col-6" :opened="modalOpen" :data="modalData" :id="modalId" @close="modalOpen=false"/>
         <div v-show="displaying === false" class="col-6 q-pa-xl">
           <p class="q-display-3 text-weight-thin">Select a state machine example to visualise!</p>
         </div>

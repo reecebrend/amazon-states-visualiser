@@ -4,38 +4,49 @@
     minimized
     no-backdrop-dismiss
     no-esc-dismiss
-    :content-css="{minWidth: '80vw'}"
+    content-classes="bg-dark"
   >
-    <q-modal-layout class="q-pa-xl bg-tertiary text-light">
-      <q-btn round class="float-right q-ma-sm" color="info" outline icon="clear" size="md" @click="opened = false">
-        <q-tooltip>Return</q-tooltip>
-      </q-btn>
-      <h4 class="text-info">{{id}}</h4>
+    <div class="q-pa-xl text-light">
+      <div class="row">
+        <div class="col-11 q-display-1 q-pl-md">{{id}}</div>
+        <div class="col-1 text-right">
+          <q-btn flat round icon="clear" color="info" @click="close" />
+        </div>
+      </div>
+
       <q-list
-        inset-seperator
+        no-border
+        dark
       >
         <q-item
           v-for="(item, idx) in Object.entries(data)"
           :key="idx"
         >
           <q-item-main>
-            <q-item-tile class="text-info">{{item[0]}}: </q-item-tile>
-            <q-item-tile>{{item[1]}}</q-item-tile>
+            <q-item-tile label>
+              {{item[0]}}
+            </q-item-tile>
+            <q-item-tile sublabel>
+              {{item[1]}}
+            </q-item-tile>
           </q-item-main>
         </q-item>
       </q-list>
-    </q-modal-layout>
+    </div>
   </q-modal>
 </template>
 
 <script>
   export default {
-    name: 'State Inspector',
+    name: 'StateInspector',
     props: [
       'opened',
       'data',
       'id'
-    ]
+    ],
+    methods: {
+      close () { this.$emit('close') }
+    }
   }
 </script>
 
